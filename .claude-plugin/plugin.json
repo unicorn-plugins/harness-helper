@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "harness-helper",
+  "displayName": "하네스 엔지니어링 적용 도우미",
+  "version": "0.1.0",
+  "description": "Claude Code 플러그인을 비용·성능·보안 하네스 통제 관점에서 점검하고 적용 가능(✅/△) 미적용 항목의 보완방안·로드맵을 도출하는 점검 플러그인",
+  "author": {
+    "name": "harness-helper팀"
+  },
+  "homepage": "https://github.com/unicorn-plugins/harness-helper#readme",
+  "repository": "https://github.com/unicorn-plugins/harness-helper",
+  "keywords": [
+    "harness",
+    "plugin-audit",
+    "cost",
+    "performance",
+    "security"
+  ]
+}

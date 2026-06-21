@@ -1,0 +1,22 @@
+{
+  "name": "harness-helper",
+  "owner": {
+    "name": "harness-helper팀"
+  },
+  "description": "Claude Code 플러그인의 비용·성능·보안 하네스 통제 점검 플러그인을 배포하는 사내 마켓플레이스",
+  "plugins": [
+    {
+      "name": "harness-helper",
+      "source": "./",
+      "description": "Claude Code 플러그인을 비용·성능·보안 하네스 통제 관점에서 점검하고 적용 가능 항목의 보완방안·로드맵을 도출하는 점검 플러그인",
+      "category": "developer-tools",
+      "keywords": [
+        "harness",
+        "plugin-audit",
+        "cost",
+        "performance",
+        "security"
+      ]
+    }
+  ]
+}
