@@ -173,8 +173,9 @@
 `apply`(`/harness-helper:apply [대상경로]`) 스킬 사용. 단순 질문은 직접 응답.
 
 **구성:** 오케스트레이터(클로니)=메인 · 점검가 3인(코스티·스피디·가디)=check Phase 2 병렬 ·  
-구현가(빌디)=apply가 호출(check 선택 시 위임). 서브에이전트는 `subagent_type` 네이티브  
-호출만 사용. 점검 범위는 ✅/△ 항목으로 한정(❌ 7장 제외).
+구현가(빌디)=apply가 호출. check와 apply는 분리됨 — check는 점검·기록·로드맵까지만, 미적용 항목  
+보완 선택·구현은 apply가 전담. 서브에이전트는 `subagent_type` 네이티브 호출만 사용. 점검 범위는  
+✅/△ 항목으로 한정(❌ 7장 제외).
 
 **변경 이력:**
 | 날짜 | 변경 내용 | 대상 | 사유 |
@@ -182,3 +183,5 @@
 | 2026-06-21 | 플러그인 초기 구현 (manifest 2종·skill·agents 4종·command·README) | 전체 | 팀 설계·references를 동작 플러그인으로 전환 |
 | 2026-06-21 | 자체 hook 미생성·✅/△ 항목 한정 점검 결정 반영 | skill·agents | 점검 중심 범위 확정 |
 | 2026-06-21 | apply 스킬·커맨드 추가 + check 위임 연결 | skill·command | 미적용 항목 복수 선택·언제든 구현 |
+| 2026-06-21 | check에서 apply 선택·위임 단계 제거 (6→5단계) | skill·command·agent·README | 보완 구현을 apply로 완전 분리 |
+| 2026-06-21 | 미적용 항목 정리 표→문단(영역→리스크→ID), apply 선택을 ID 입력 방식으로 전환 (v1.0.4) | skill·reference·prompt·README | 가독성·재점검 시 번호 안정 |
