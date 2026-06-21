@@ -1,8 +1,7 @@
 ---
-name: harness-check
+name: check
 description: Claude Code 플러그인을 비용·성능·보안 하네스 통제 관점에서 점검하고, 적용 가능(✅/△) 미적용 항목의 보완방안·로드맵을 도출하는 스킬. 플러그인 점검·하네스 진단·재점검·갱신·보완 요청 시 사용.
 triggers:
-  - harness-check
   - 하네스 점검
   - 하네스 체크
   - 하네스 진단
@@ -12,7 +11,7 @@ argument-hint: "[대상 플러그인 경로]"
 user-invocable: false
 ---
 
-# harness-check — 플러그인 하네스 통제 점검 스킬
+# check — 플러그인 하네스 통제 점검 스킬
 
 대상 Claude Code 플러그인의 비용·성능·보안 하네스 통제 중 **적용 가능(✅/△) 항목**을 6단계로 점검하고,  
 미적용 항목의 보완방안·적용 로드맵을 도출함. 근거 문서: `${CLAUDE_PLUGIN_ROOT}/references/harness-checker.md`.
@@ -25,7 +24,7 @@ user-invocable: false
 | 비용 통제 점검가 | 코스티 | Phase 2 (비용 2장) | `cost-checker` |
 | 성능 통제 점검가 | 스피디 | Phase 2 (성능 3장) | `performance-checker` |
 | 보안 통제 점검가 | 가디 | Phase 2 (보안 4장) | `security-checker` |
-| 구현 엔지니어 | 빌디 | Phase 4 (harness-apply 스킬 경유) | `implementation-engineer` |
+| 구현 엔지니어 | 빌디 | Phase 4 (apply 스킬 경유) | `implementation-engineer` |
 
 > 서브에이전트는 `subagent_type` 네이티브 호출만 사용함 (수동 `.md` Read·임베딩 금지 — 이중 경로는 호출 충돌 유발).
 
@@ -80,13 +79,13 @@ prompt: |
    `multiSelect: true`로 **구현할 상세 항목을 영역별 복수 선택**받음. 한 영역 항목 4개 초과 시 심각도순 4개씩  
    분할 질문(옵션 4개 한도). 전 영역 선택 0건이면 Phase 5로
 
-## Phase 4. 선택 항목 구현 `[harness-apply 스킬로 위임]`
+## Phase 4. 선택 항목 구현 `[apply 스킬로 위임]`
 
-Phase 3에서 사용자가 선택한 항목이 있으면 `harness-apply` 스킬에 구현을 위임함:
-- `${CLAUDE_PLUGIN_ROOT}/skills/harness-apply/SKILL.md`를 읽고 아래를 입력으로 실행
+Phase 3에서 사용자가 선택한 항목이 있으면 `apply` 스킬에 구현을 위임함:
+- `${CLAUDE_PLUGIN_ROOT}/skills/apply/SKILL.md`를 읽고 아래를 입력으로 실행
   - 대상경로={대상경로}
   - 선택 항목 목록={Phase 3에서 선택된 항목}
-- harness-apply가 빌디(`implementation-engineer`)를 호출해 구현·검증하고, 결과를  
+- apply가 빌디(`implementation-engineer`)를 호출해 구현·검증하고, 결과를  
   harness-adoption-plan.md(N→Y·변경 이력)에 반영함
 
 선택 항목이 없으면 Phase 5로 진행. 반환값 → `{impl_result}` (변경 파일·검증 결과 표)

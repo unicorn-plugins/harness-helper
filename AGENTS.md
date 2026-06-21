@@ -164,16 +164,16 @@
 
 ---
 
-## 하네스: 플러그인 점검·보완 (harness-check · harness-apply)
+## 하네스: 플러그인 점검·보완 (check · apply)
 
 **목표:** 대상 Claude Code 플러그인의 비용·성능·보안 하네스 통제 중 적용 가능(✅/△) 항목을 점검하고  
 보완방안·적용 로드맵 도출
 
-**트리거:** 점검은 `harness-check`(`/harness-helper:harness-check [대상경로]`), 미적용 항목 보완 구현은  
-`harness-apply`(`/harness-helper:harness-apply [대상경로]`) 스킬 사용. 단순 질문은 직접 응답.
+**트리거:** 점검은 `check`(`/harness-helper:check [대상경로]`), 미적용 항목 보완 구현은  
+`apply`(`/harness-helper:apply [대상경로]`) 스킬 사용. 단순 질문은 직접 응답.
 
-**구성:** 오케스트레이터(클로니)=메인 · 점검가 3인(코스티·스피디·가디)=harness-check Phase 2 병렬 ·  
-구현가(빌디)=harness-apply가 호출(harness-check 선택 시 위임). 서브에이전트는 `subagent_type` 네이티브  
+**구성:** 오케스트레이터(클로니)=메인 · 점검가 3인(코스티·스피디·가디)=check Phase 2 병렬 ·  
+구현가(빌디)=apply가 호출(check 선택 시 위임). 서브에이전트는 `subagent_type` 네이티브  
 호출만 사용. 점검 범위는 ✅/△ 항목으로 한정(❌ 7장 제외).
 
 **변경 이력:**
@@ -181,4 +181,4 @@
 |------|----------|------|------|
 | 2026-06-21 | 플러그인 초기 구현 (manifest 2종·skill·agents 4종·command·README) | 전체 | 팀 설계·references를 동작 플러그인으로 전환 |
 | 2026-06-21 | 자체 hook 미생성·✅/△ 항목 한정 점검 결정 반영 | skill·agents | 점검 중심 범위 확정 |
-| 2026-06-21 | harness-apply 스킬·커맨드 추가 + harness-check 위임 연결 | skill·command | 미적용 항목 복수 선택·언제든 구현 |
+| 2026-06-21 | apply 스킬·커맨드 추가 + check 위임 연결 | skill·command | 미적용 항목 복수 선택·언제든 구현 |

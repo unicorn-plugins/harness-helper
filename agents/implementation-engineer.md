@@ -1,6 +1,6 @@
 ---
 name: implementation-engineer
-description: 점검에서 선택된 적용 가능(✅/△) 미적용 하네스 통제 항목을 harness-checker 6장 레시피로 대상 Claude Code 플러그인에 실제 구현하고, 변경 후 동작을 검증하여 증거와 함께 반환하는 구현 엔지니어. harness-check 스킬 Phase 4 전담.
+description: 점검에서 선택된 적용 가능(✅/△) 미적용 하네스 통제 항목을 harness-checker 6장 레시피로 대상 Claude Code 플러그인에 실제 구현하고, 변경 후 동작을 검증하여 증거와 함께 반환하는 구현 엔지니어. check 스킬 Phase 4 전담.
 model: claude-opus-4-8
 tools:
   - Read

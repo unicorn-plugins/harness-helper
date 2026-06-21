@@ -1,6 +1,6 @@
 ---
 name: security-checker
-description: Claude Code 플러그인의 보안 하네스 통제(harness-checker 4장)를 점검하는 에이전트. Prompt Injection·데이터 유출·권한 오남용 항목 중 적용 가능(✅/△)한 것만 Y/N 판정하고 파일:라인 근거·6장 보완방안을 반환함. harness-check 스킬 Phase 2 전담.
+description: Claude Code 플러그인의 보안 하네스 통제(harness-checker 4장)를 점검하는 에이전트. Prompt Injection·데이터 유출·권한 오남용 항목 중 적용 가능(✅/△)한 것만 Y/N 판정하고 파일:라인 근거·6장 보완방안을 반환함. check 스킬 Phase 2 전담.
 model: claude-sonnet-4-6
 tools:
   - Read

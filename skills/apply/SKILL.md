@@ -1,8 +1,7 @@
 ---
-name: harness-apply
-description: 점검 기록(harness-adoption-plan.md)의 미적용(✅/△) 하네스 통제 항목을 사용자가 언제든 복수 선택하여 대상 Claude Code 플러그인에 보완 구현하는 스킬. 미적용 항목 구현·보완 적용·추가 적용 요청 시, 또는 harness-check가 선택 항목을 위임할 때 사용.
+name: apply
+description: 점검 기록(harness-adoption-plan.md)의 미적용(✅/△) 하네스 통제 항목을 사용자가 언제든 복수 선택하여 대상 Claude Code 플러그인에 보완 구현하는 스킬. 미적용 항목 구현·보완 적용·추가 적용 요청 시, 또는 check가 선택 항목을 위임할 때 사용.
 triggers:
-  - harness-apply
   - 하네스 보완
   - 하네스 적용
   - 미적용 구현
@@ -12,10 +11,10 @@ argument-hint: "[대상 플러그인 경로]"
 user-invocable: false
 ---
 
-# harness-apply — 미적용 하네스 통제 보완 구현 스킬
+# apply — 미적용 하네스 통제 보완 구현 스킬
 
 점검 기록(`{대상경로}/harness/harness-adoption-plan.md`)에 남은 **미적용(N)·적용 가능(✅/△) 항목**을  
-사용자가 **언제든 복수 선택**하여 대상 플러그인에 보완 구현함. harness-check 직후뿐 아니라 추후 세션에서도  
+사용자가 **언제든 복수 선택**하여 대상 플러그인에 보완 구현함. check 직후뿐 아니라 추후 세션에서도  
 독립 실행 가능. 구현은 구현 엔지니어(빌디)가 수행하고, 결과를 점검 기록에 반영함.
 
 ## 팀 역할 분담
@@ -32,11 +31,11 @@ user-invocable: false
 ## Phase 0. 컨텍스트 확인 `[클로니 — 직접 수행]`
 
 - `"$ARGUMENTS"`(또는 입력)에서 `{대상경로}` 확보. 미입력 시 AskUserQuestion으로 요청
-- **harness-check가 위임한 선택 항목 목록**이 입력으로 전달됐으면 → Phase 3으로 직행(선택 단계 생략)
+- **check가 위임한 선택 항목 목록**이 입력으로 전달됐으면 → Phase 3으로 직행(선택 단계 생략)
 - `{대상경로}/harness/harness-adoption-plan.md` 존재 여부 확인
   - 존재 → Phase 1
-  - 미존재 → `harness-check` 스킬을 먼저 호출해 점검 기록을 생성한 뒤 Phase 1
-    (`${CLAUDE_PLUGIN_ROOT}/skills/harness-check/SKILL.md`를 읽어 {대상경로} 점검 실행)
+  - 미존재 → `check` 스킬을 먼저 호출해 점검 기록을 생성한 뒤 Phase 1
+    (`${CLAUDE_PLUGIN_ROOT}/skills/check/SKILL.md`를 읽어 {대상경로} 점검 실행)
 
 ## Phase 1. 미적용 항목 도출 (영역별 그룹화) `[클로니 — 직접 수행]`
 
@@ -91,7 +90,7 @@ prompt: |
 | 항목 | 필수 | 기본값 | 설명 |
 |------|------|--------|------|
 | 대상 플러그인 경로 | 필수 | — | 보완할 Claude Code 플러그인 루트 경로 |
-| 선택 항목 목록 | 선택 | — | harness-check 위임 시 전달(있으면 선택 단계 생략) |
+| 선택 항목 목록 | 선택 | — | check 위임 시 전달(있으면 선택 단계 생략) |
 
 ## 출력
 
