@@ -64,7 +64,7 @@ subagent_type: "implementation-engineer" · model: "opus"
 prompt: |
   [목표] 선택된 적용 가능(✅/△) 항목을 6장 레시피로 {대상경로}에 구현 후 동작 검증
   [입력정보] 대상경로={대상경로} · 영역별 선택 항목 목록 · 각 항목 근거·보완방안(harness-adoption-plan.md)
-  [제약] 구현 산출물·설명은 한국어로 작성
+  [제약] 구현 산출물·설명은 한국어로 작성 · 임계값은 훅에 하드코딩하지 말고 `harness.conf`(KEY=value·`#` 주석 지원)+공유 로더(`hooks/lib/harness-config.mjs`)로 외부화(harness-checker §0-3) · 외부 CLI(yq/jq/bash) 의존 금지(Node .mjs만)
 ```
 
 반환값 → `{impl_result}` (변경 파일·이벤트/타입·검증 결과 표)
@@ -108,6 +108,7 @@ prompt: |
 - 적용 가능(✅/△) **미적용(N)** 항목만 구현 대상에 포함
 - 미적용 항목 정리를 **문단 포맷으로 본문 출력**하고, 사용자가 **ID로 선택한 항목만** 구현 (AskUserQuestion 미사용)
 - 빌디는 각 변경 후 동작 검증 증거 확보 (node 실행·JSON 파싱·로그 적재)
+- 빌디 호출 시 임계값을 `harness.conf` + 공유 로더(`hooks/lib/harness-config.mjs`)로 **외부화**하도록 지시 (훅 하드코딩·yq/jq/bash 의존 금지, harness-checker §0-3)
 - 구현 결과를 harness-adoption-plan.md에 `~~취소선~~ [적용됨]`·요약표·변경 이력으로 반영 (**ID 보존**)
 - 산출 내용·완료 보고는 사용자 친화적으로 쉽게 설명하고, 필요 시 비유·예시를 사용
 - 빌디 호출 시 **구현 산출물·설명을 한국어로 작성**하도록 지시

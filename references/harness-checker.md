@@ -47,79 +47,103 @@
 
 ---
 
-## 0-3. harness.yaml 설정 파일
+## 0-3. harness.conf 설정 파일
 
-훅 스크립트에 임계값을 하드코딩하지 않고 단일 설정 파일에서 관리함.  
-훅 스크립트는 `yq` 또는 `jq`로 이 파일을 읽어 한도를 참조함.
+훅 스크립트에 임계값을 **하드코딩하지 않고** 단일 설정 파일에서 관리함.  
+훅은 의존성 없는 공유 로더(`hooks/lib/harness-config.mjs`)로 이 파일을 읽어 한도를 참조함.
 
-**파일 위치**: 플러그인 루트 (`harness.yaml`)
+**포맷 선정**: `yq`/`jq`는 Windows 기본 미설치이고 본 가이드의 훅은 `node`(.mjs)로 작성하므로(bash 무음 실패 회피)  
+외부 CLI 의존을 피함. JSON은 주석 미지원, YAML은 Node 내장 파서 부재로 배제하고  
+**`KEY=value`(dotenv 호환) 포맷**을 채택함 — 주석(`#`) 지원·Node 내장만으로 파싱·크로스플랫폼.
 
-```yaml
-# harness.yaml — 비용 하네스 설정 (성능·보안 섹션은 추후 추가)
+**파일 위치**: 플러그인 루트 (`harness.conf`) · **상태 파일**: `.harness/*.json`(런타임 누적)
 
-budget:
-  max_tokens: 100000          # 세션 전체 토큰 한도
-  max_tokens_per_call: 10000  # 호출당 최대 토큰
-  alert_at: 0.8               # 80% 도달 시 경고 로그
-  state_file: ".harness/budget.json"   # PostToolUse 누적 적재 파일
+```ini
+# harness.conf — Claude Code 하네스 통제 설정
+# 규칙: KEY=value · 줄 시작 '#' 또는 값 뒤 ' #'는 주석 · 리스트는 쉼표(,) 구분
+# 훅은 hooks/lib/harness-config.mjs 로더로 읽음 (yq/jq 불필요)
 
-loops:
-  targets:                    # 카운트할 도구 (Bash·Read 등 기본 도구는 제외)
-    - "Agent"
-    - "WebSearch"
-    - "WebFetch"
-  max_iterations: 10          # targets 도구의 최대 호출 횟수
-  state_file: ".harness/loop.json"
+# ── 비용: 예산(Budget) ──
+BUDGET_MAX_TOKENS=100000          # 세션 전체 토큰 한도
+BUDGET_MAX_TOKENS_PER_CALL=10000  # 호출당 최대 토큰
+BUDGET_ALERT_AT=0.8               # 80% 도달 시 경고 로그
+BUDGET_STATE_FILE=.harness/budget.json
 
-agents:
-  max_calls: 20               # Agent 도구 최대 호출 수
-  state_file: ".harness/agents.json"
+# ── 비용: 무한 루프(Loop) ──
+LOOP_TARGETS=Agent,WebSearch,WebFetch   # 카운트할 도구(부분일치, 기본 도구 제외)
+LOOP_MAX_ITERATIONS=10                  # targets 도구 최대 호출 횟수
+LOOP_STATE_FILE=.harness/loop.json
 
-# 성능 하네스 설정
-performance:
-  circuit_breaker:
-    targets:                  # 감시할 도구 (외부 호출 도구만 지정)
-      - "WebFetch"
-      - "WebSearch"
-    failure_threshold: 3      # 연속 실패 횟수 임계값 (초과 시 open)
-    recovery_seconds: 60      # open → half-open 전환 대기 시간(초)
-                              # (bash: date +%s 로 경과 시간 비교, native 아님)
-    half_open: true           # half-open 활성화 시 프로브 1회 허용 후 결과로 분기
-                              #   성공 → closed (failures 리셋)
-                              #   실패 → open (opened_at 리셋)
-    fallback:
-      strategy: "cache"       # cache | guide | tool | escalate
-                              #   cache: 마지막 성공 결과를 additionalContext로 전달
-                              #   guide: Claude에게 대체 방법 지시 (soft)
-                              #   tool: updatedInput으로 폴백 도구로 교체
-                              #   escalate: decision:ask로 사용자에게 판단 위임
-      cache_file: ".harness/cb-cache.json"   # strategy=cache 일 때 캐시 저장 파일
-      guide_message: "외부 서비스 차단 중. 이전 결과 또는 학습 지식으로 답변하세요."
-    state_file: ".harness/circuit.json"
-  cache:
-    targets:                  # 캐시 적용 도구 (외부 조회 도구만 지정)
-      - "WebFetch"
-      - "WebSearch"
-    ttl: 3600                 # 캐시 유효 시간(초), 초과 시 미스로 처리
-    cache_file: ".harness/cache.json"
-    # cache.json 구조:
-    # { "<input_hash>": { "result": "...", "cached_at": <unix_ts> } }
-    # circuit.json 구조:
-    # { "state": "closed",      ← closed | open | half-open
-    #   "failures": 0,          ← 연속 실패 카운트
-    #   "opened_at": null,      ← open 전환 시각 (Unix timestamp)
-    #   "probe_sent": false }   ← half-open 프로브 발송 여부
+# ── 비용: Agent 폭주 ──
+AGENT_MAX_CALLS=20                # Agent 도구 최대 호출 수
+AGENT_STATE_FILE=.harness/agents.json
+
+# ── 성능: Circuit Breaker ──
+CB_TARGETS=WebFetch,WebSearch     # 감시 도구(외부 호출만)
+CB_FAILURE_THRESHOLD=3            # 연속 실패 임계(초과 시 open)
+CB_RECOVERY_SECONDS=60            # open→half-open 대기(초)
+CB_HALF_OPEN=true                 # half-open 프로브 1회 허용 후 결과로 분기
+CB_FALLBACK_STRATEGY=cache        # cache | guide | tool | escalate
+CB_FALLBACK_CACHE_FILE=.harness/cb-cache.json
+CB_FALLBACK_GUIDE_MESSAGE=외부 서비스 차단 중. 이전 결과 또는 학습 지식으로 답변하세요.
+CB_STATE_FILE=.harness/circuit.json
+
+# ── 성능: 캐싱(Cache) ──
+CACHE_TARGETS=WebFetch,WebSearch  # 캐시 적용 도구(외부 조회만)
+CACHE_TTL=3600                    # 캐시 유효 시간(초)
+CACHE_FILE=.harness/cache.json
 ```
 
-**훅에서 읽는 예시**
+> 리스트는 쉼표 구분(`A,B,C`)으로 표현하고, 중첩은 접두사 키(`CB_*`·`CACHE_*`)로 그룹화함.  
+> 값에 쉼표·`' #'`가 필요하면 해당 항목은 단일 값으로 두거나 로더에서 별도 처리함.
 
-```bash
-MAX=$(yq '.budget.max_tokens' harness.yaml)
-CURRENT=$(jq '.total // 0' "$(yq '.budget.state_file' harness.yaml)")
-[ "$CURRENT" -gt "$MAX" ] && echo "한도 초과" && exit 2
+**의존성 없는 로더** (`hooks/lib/harness-config.mjs`) — `yq`/`jq` 대체
+
+```javascript
+// harness.conf(KEY=value · '#' 주석 · 쉼표 리스트)를 의존성 없이 파싱. 크로스플랫폼.
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+function locate() {
+  const root = process.env.CLAUDE_PLUGIN_ROOT || join(import.meta.dirname, '..', '..');
+  return join(root, 'harness.conf');
+}
+function coerce(v) {
+  if (v === 'true') return true;
+  if (v === 'false') return false;
+  if (v.includes(',')) return v.split(',').map((s) => coerce(s.trim()));
+  if (/^-?\d+(\.\d+)?$/.test(v)) return Number(v);
+  return v;
+}
+let cached;
+export function loadConfig(defaults = {}) {
+  if (cached) return cached;
+  const cfg = { ...defaults };
+  try {
+    for (let line of readFileSync(locate(), 'utf8').split(/\r?\n/)) {
+      line = line.trim();
+      if (!line || line.startsWith('#')) continue;            // 전체 줄 주석
+      const eq = line.indexOf('='); if (eq < 0) continue;
+      const key = line.slice(0, eq).trim();
+      let val = line.slice(eq + 1).trim();
+      const h = val.indexOf(' #'); if (h >= 0) val = val.slice(0, h).trim();  // 인라인 주석
+      if (key) cfg[key] = coerce(val);
+    }
+  } catch { /* 파일 부재·오류 → defaults (fail-open) */ }
+  return (cached = cfg);
+}
 ```
 
-> 앞으로 성능(circuit_breaker·타임아웃)·보안(dlp·허용 도메인) 섹션을 이 파일에 추가함.
+**훅에서 읽는 예시** (bash `yq`/`jq` 대체)
+
+```javascript
+import { loadConfig } from './lib/harness-config.mjs';
+const cfg = loadConfig({ BUDGET_MAX_TOKENS: 200000 });   // 2번째 인자 = 파일 부재 시 기본값
+if (total > cfg.BUDGET_MAX_TOKENS) { /* deny 처리 */ }
+```
+
+> 보안 섹션(허용 도메인·DLP 등)도 동일 포맷으로 이 파일에 추가함  
+> (예: `ALLOWED_DOMAINS=dart.fss.or.kr,opendart.fss.or.kr`).
 
 ---
 
@@ -304,6 +328,10 @@ CURRENT=$(jq '.total // 0' "$(yq '.budget.state_file' harness.yaml)")
 ## 6. 미적용 하네스 구현 방법
 
 ### 6.1 공통 복붙 스니펫
+
+> **Node(.mjs) 우선 · 설정 외부화**: 아래 A~E는 원리 설명용 bash 예시임. 본 가이드 대상은 Windows 포함 크로스플랫폼이므로  
+> 실제 구현은 `node`(.mjs)로 작성하고(bash/yq/jq 의존 금지), 임계값·targets는 `harness.conf` + 공유 로더(§0-3)로 읽음.  
+> 하드코딩 금지 — 모든 튜너블은 `harness.conf`에서 가져옴.
 
 차단은 `exit 2` 또는 JSON `permissionDecision`/`decision`으로 함. `exit 1`은 비차단임([harness-hooks.md §8](harness-hooks.md)).
 

@@ -24,11 +24,12 @@ tools:
 
 [작업방법]
 1. 대상 플러그인 구성요소 수집: `.claude-plugin/plugin.json`(hooks 등록)·`hooks/`·`agents`/`skills` frontmatter  
-   (`tools`·`model`)·`settings`·`.mcp.json`을 Read/Grep/Glob로 확인
+   (`tools`·`model`)·`settings`·`.mcp.json`·`harness.conf`(하네스 설정 외부화 — budget·loops·agents 섹션, 있으면)을  
+   Read/Grep/Glob로 확인
 2. ⓪ 적용 가능성 재판정: harness-checker 0-2장 규칙으로 2장 각 항목을 ✅(적용 가능)/△(조건부)/❌(구조적 불가)로  
    분류. 단일 게이트 강제가 가능하면 △→✅ 승격
-3. ✅·△ 항목만 ② Y/N 판정 (대상 항목: 최대 반복 횟수·반복 패턴 감지·부분 결과 반환·입력 절삭·핸드오프 요약  
-   전달·요청별 사용량 측정·호출 수 제한·이력 요약·Budget 한도·Kill-switch·동시 실행 제한·깊이 제한)
+3. ✅·△ 항목만 ② Y/N 판정 (대상 항목 8종: 최대 반복 횟수·반복 패턴 감지·입력 절삭·요청별 사용량 측정·  
+   호출 수 제한·Budget 한도·핸드오프 요약 전달·부분 결과 반환)
 4. ③ 근거: 각 Y/N에 파일:라인 기재 — 근거 없는 Y는 N으로 처리
 5. N 항목은 6장 레시피로 보완방안 도출. ❌ 항목은 Y/N 판정에서 제외하고 7장 대안만 1줄 안내
 
