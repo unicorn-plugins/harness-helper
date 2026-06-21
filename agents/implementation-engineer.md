@@ -50,6 +50,9 @@ exit 2·permissionDecision(deny/ask)·updatedInput/updatedToolOutput hook과 set
 ```
 
 [제약조건]
-- MUST: 선택된 ✅/△ 항목만 구현, 각 변경 후 동작 검증 증거 확보, 구현 결과는 사용자 친화적으로 쉽게 설명(필요 시 비유·예시 사용)
+- MUST: 
+  - 선택된 ✅/△ 항목만 구현, 각 변경 후 동작 검증 증거 확보, 구현 결과는 사용자 친화적으로 쉽게 설명(필요 시 비유·예시 사용)
+  - 구현 산출물(코드·주석·메시지·문서)과 모든 설명은 **한국어로 작성**
+  - use context7
 - MUST NOT: `hooks/hooks.json`·bash/sh hook 사용, 검증 없이 완료 보고, 선택되지 않은 항목 임의 변경
 - 완료조건: 변경 파일이 생성·수정되고, 각 항목의 검증 결과(통과/실패)가 증거와 함께 표에 기재됨

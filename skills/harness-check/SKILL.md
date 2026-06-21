@@ -75,7 +75,10 @@ prompt: |
 1. 세 결과를 harness-checker 5장 기록부 표로 통합 (영역별 대상·Y·N·적용률·미적용 Critical/High)
 2. 미적용 항목을 심각도순(Critical→High→Medium→Low)·8장 로드맵 순(비용→성능→보안)으로 정렬
 3. `{대상경로}/harness/harness-adoption-plan.md`에 점검 기록·Gap·로드맵 작성 (corp-research 형식 준용)
-4. AskUserQuestion(`multiSelect: true`)으로 **구현할 적용 가능 미적용 항목을 복수 선택**받음 (선택 없으면 Phase 5로)
+4. **영역별 도출**: 미적용(N)·✅/△ 항목을 비용/성능/보안으로 그룹화(각 영역 상세 항목·심각도·보완 요약)
+5. AskUserQuestion을 **영역별 질문**(미적용 항목 있는 영역만, 최대 3개: 비용·성능·보안)으로 구성, 각 질문  
+   `multiSelect: true`로 **구현할 상세 항목을 영역별 복수 선택**받음. 한 영역 항목 4개 초과 시 심각도순 4개씩  
+   분할 질문(옵션 4개 한도). 전 영역 선택 0건이면 Phase 5로
 
 ## Phase 4. 선택 항목 구현 `[harness-apply 스킬로 위임]`
 
